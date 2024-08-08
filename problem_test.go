@@ -155,7 +155,7 @@ func TestProblem(t *testing.T) {
 		}`)
 
 		err := json.Unmarshal(jsonData, &e)
-		assert.Nil(t, err)
+		require.Nil(t, err)
 
 		assert.Equal(t, http.StatusForbidden, e.Status)
 		assert.Equal(t, "/account/12345/msgs/abc", e.Instance)
@@ -205,5 +205,15 @@ func TestProblem(t *testing.T) {
 
 		assert.Equal(t, 30, p.Extensions["balance"])
 		assert.Equal(t, []string{"/account/12345", "/account/67890"}, p.Extensions["accounts"])
+	})
+
+	t.Run("should fail unmarshalling on invalid json", func(t *testing.T) {
+		var e Problem
+		jsonData := []byte(`{
+			"type": null,
+		`)
+		err := json.Unmarshal(jsonData, &e)
+		require.Error(t, err)
+		assert.Equal(t, "unexpected end of JSON input", err.Error())
 	})
 }

@@ -7,13 +7,12 @@ package problem
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"reflect"
 	"strconv"
 )
 
 // Problem is a struct that represents a problem instance
-// as defined in RFC 9457 (https://tools.ietf.org/html/rfc9457).
+// as defined in RFC-9457 (https://tools.ietf.org/html/rfc9457).
 // All fields are optional.
 type Problem struct {
 	Status     int            `json:"status,omitempty"`
@@ -24,30 +23,36 @@ type Problem struct {
 	Extensions map[string]any `json:"-"`
 }
 
+// New returns a new Problem instance.
 func New() *Problem {
 	return new(Problem)
 }
 
+// WithStatus sets the status code.
 func (p *Problem) WithStatus(v int) *Problem {
 	p.Status = v
 	return p
 }
 
+// WithInstance sets the instance URI.
 func (p *Problem) WithInstance(v string) *Problem {
 	p.Instance = v
 	return p
 }
 
+// WithDetail sets the problem detail.
 func (p *Problem) WithDetail(v string) *Problem {
 	p.Detail = v
 	return p
 }
 
+// WithTitle sets the problem title.
 func (p *Problem) WithTitle(v string) *Problem {
 	p.Title = v
 	return p
 }
 
+// WithType sets the problem type.
 func (p *Problem) WithType(v string) *Problem {
 	p.Type = v
 	return p
@@ -106,7 +111,6 @@ func (p *Problem) UnmarshalJSON(data []byte) error {
 		m   map[string]any
 		err error
 	)
-
 	if err = json.Unmarshal(data, &m); err != nil {
 		return err
 	}
@@ -130,21 +134,6 @@ func (p *Problem) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (p *Problem) JSON(w http.ResponseWriter) {
-	body, err := json.Marshal(p)
-	if err != nil {
-		p.Status = http.StatusUnprocessableEntity
-		body, _ = json.Marshal(Problem{
-			Status: p.Status,
-			Detail: err.Error(),
-			Title:  "JSON Encoding Error",
-		})
-	}
-	w.Header().Set("Content-Type", "application/problem+json")
-	w.WriteHeader(p.Status)
-	_, _ = w.Write(body)
-}
-
 // toInt converts various numeric types into int.
 func (p Problem) toInt(value any) (int, error) {
 	switch v := reflect.ValueOf(value); v.Kind() {
@@ -154,10 +143,6 @@ func (p Problem) toInt(value any) (int, error) {
 			return 0, fmt.Errorf("invalid status type: %v", v.Kind())
 		}
 		return i, nil
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return int(v.Int()), nil
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return int(v.Uint()), nil
 	case reflect.Float32, reflect.Float64:
 		return int(v.Float()), nil
 	default:
