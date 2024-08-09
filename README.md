@@ -40,15 +40,13 @@ func NotFoundHandler() http.HandlerFunc {
 
 // or with helper methods
 
-func NotFoundHandler() http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        problem.New().
-            WithStatus(http.StatusNotFound).
-            WithDetail("No such API route").
-            WithTitle("Route Not Found").
-            WithInstance(r.URL.Path).
-            JSON(w)
-    }
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+    problem.New().
+        WithStatus(http.StatusNotFound).
+        WithDetail("No such API route").
+        WithTitle("Route Not Found").
+        WithInstance(r.URL.Path).
+        JSON(w)
 }
 ```
 
@@ -64,7 +62,7 @@ import (
 
 func main() {
     mux := chi.NewRouter()
-    mux.NotFound(middleware.NotFoundHandler())
+    mux.NotFound(middleware.NotFoundHandler)
 
     ...
 
