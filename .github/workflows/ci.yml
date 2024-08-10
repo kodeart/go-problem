@@ -1,4 +1,4 @@
-name: Rune tests and code coverage
+name: Run tests and code coverage
 on: [ push, pull_request ]
 jobs:
   tests:
