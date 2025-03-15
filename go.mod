@@ -1,4 +1,4 @@
-module github.com/kodeart/go-problem
+module github.com/kodeart/go-problem/v2
 
 go 1.19
 

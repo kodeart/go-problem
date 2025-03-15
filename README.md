@@ -21,7 +21,7 @@ in HTTP APIs. It implements the [RFC-9457][RFC9457] standard that creates error 
 ## Installation
 
 ```bash
-go get -u github.com/kodeart/go-problem
+go get -u github.com/kodeart/go-problem/v2
 ```
 
 ### What is it again?
