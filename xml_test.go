@@ -174,7 +174,6 @@ func TestXmlUnmarshal(t *testing.T) {
         </problem>`
 
         err := xml.Unmarshal( []byte(xmlData), &e)
-        t.Logf("###INSTANCE###:\n%+v", e)
 
         assert.Nil(t, err)
         // these should be empty
