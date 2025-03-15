@@ -129,8 +129,7 @@ func (p *Problem) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 				if err = d.DecodeElement(&content, &t); err != nil {
 					return err
 				}
-				val := unmarshalXmlValue(string(content.Data))
-				if val != nil {
+				if val := unmarshalXmlValue(string(content.Data)); val != "" {
 					extensions[name] = append(extensions[name], val)
 				}
 			}
