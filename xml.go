@@ -38,34 +38,22 @@ func (p Problem) MarshalXML(e *xml.Encoder, _ xml.StartElement) error {
         Name: xml.Name{Local: "problem"},
         Attr: []xml.Attr{{Name: xml.Name{Local: "xmlns"}, Value: "urn:ietf:rfc:7807"}},
     }
-    if err = e.EncodeToken(start); err != nil {
-        return err
-    }
+    _ = e.EncodeToken(start)
     if p.Status > 0 {
-        if err = e.EncodeElement(p.Status, xml.StartElement{Name: xml.Name{Local: "status"}}); err != nil {
-            return err
-        }
+        _ = e.EncodeElement(p.Status, xml.StartElement{Name: xml.Name{Local: "status"}})
     }
     if p.Type != "" {
-        if err = e.EncodeElement(p.Type, xml.StartElement{Name: xml.Name{Local: "type"}}); err != nil {
-            return err
-        }
-    }
-    if p.Title != "" {
-        if err = e.EncodeElement(p.Title, xml.StartElement{Name: xml.Name{Local: "title"}}); err != nil {
-            return err
-        }
-    }
-    if p.Detail != "" {
-        if err = e.EncodeElement(p.Detail, xml.StartElement{Name: xml.Name{Local: "detail"}}); err != nil {
-            return err
-        }
-    }
-    if p.Instance != "" {
-        if err = e.EncodeElement(p.Instance, xml.StartElement{Name: xml.Name{Local: "instance"}}); err != nil {
-            return err
-        }
-    }
+		_ = e.EncodeElement(p.Type, xml.StartElement{Name: xml.Name{Local: "type"}})
+	}
+	if p.Title != "" {
+		_ = e.EncodeElement(p.Title, xml.StartElement{Name: xml.Name{Local: "title"}})
+	}
+	if p.Detail != "" {
+		_ = e.EncodeElement(p.Detail, xml.StartElement{Name: xml.Name{Local: "detail"}})
+	}
+	if p.Instance != "" {
+		_ = e.EncodeElement(p.Instance, xml.StartElement{Name: xml.Name{Local: "instance"}})
+	}
     if err = marshalXmlValues(e, p.Extensions); err != nil {
     	return err
     }
@@ -97,38 +85,26 @@ func (p *Problem) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 			switch name {
 			case "status":
 				var status string
-				if err = d.DecodeElement(&status, &t); err != nil {
-					return err
-				}
+				_ = d.DecodeElement(&status, &t)
 				statusCode, err := p.statusCode(status)
 				if err != nil {
 					return err
 				}
 				p.Status = statusCode
-			case "instance":
-				if err = d.DecodeElement(&p.Instance, &t); err != nil {
-					return err
-				}
-			case "detail":
-				if err = d.DecodeElement(&p.Detail, &t); err != nil {
-					return err
-				}
-			case "title":
-				if err = d.DecodeElement(&p.Title, &t); err != nil {
-					return err
-				}
-			case "type":
-				if err = d.DecodeElement(&p.Type, &t); err != nil {
-					return err
-				}
+				case "instance":
+					_ = d.DecodeElement(&p.Instance, &t)
+				case "detail":
+					_ = d.DecodeElement(&p.Detail, &t)
+				case "title":
+					_ = d.DecodeElement(&p.Title, &t)
+				case "type":
+					_ = d.DecodeElement(&p.Type, &t)
 			default:
 				// This is an extension field
 				var content struct {
 					Data []byte `xml:",innerxml"`
 				}
-				if err = d.DecodeElement(&content, &t); err != nil {
-					return err
-				}
+				_ = d.DecodeElement(&content, &t)
 				if val := unmarshalXmlValue(string(content.Data)); val != "" {
 					extensions[name] = append(extensions[name], val)
 				}
@@ -210,47 +186,29 @@ func marshalXmlValues(e *xml.Encoder, ext map[string]any) error {
 	                }
 	                sort.Strings(mapKeys)
                     // Start a new tag for each map
-                    if err = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}}); err != nil {
-                        return err
-                    }
+                    _ = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}})
                     // Encode map key-value pairs in sorted order
                     for _, mk := range mapKeys {
-                        if err = e.EncodeElement(m[mk], xml.StartElement{Name: xml.Name{Local: mk}}); err != nil {
-                            return err
-                        }
+                        _ = e.EncodeElement(m[mk], xml.StartElement{Name: xml.Name{Local: mk}})
                     }
-                    if err = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}}); err != nil {
-                        return err
-                    }
+                    _ = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}})
                 }
             }
         case []string:
-            if err = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}}); err != nil {
-                return err
-            }
+            _ = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}})
             for _, item := range val {
-                if err = e.EncodeElement(item, xml.StartElement{Name: xml.Name{Local: "i"}}); err != nil {
-                    return err
-                }
+                _ = e.EncodeElement(item, xml.StartElement{Name: xml.Name{Local: "i"}})
             }
-            if err = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}}); err != nil {
-                return err
-            }
+            _ = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}})
         default:
             rv := reflect.ValueOf(v)
             if rv.Kind() == reflect.Array {
-                if err = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}}); err != nil {
-                    return err
-                }
+                _ = e.EncodeToken(xml.StartElement{Name: xml.Name{Local: k}})
                 j := rv.Len()
                 for i := 0; i < j; i++ {
-                    if err = e.EncodeElement(rv.Index(i).Interface(), xml.StartElement{Name: xml.Name{Local: "i"}}); err != nil {
-                        return err
-                    }
+                    _ = e.EncodeElement(rv.Index(i).Interface(), xml.StartElement{Name: xml.Name{Local: "i"}})
                 }
-                if err = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}}); err != nil {
-                    return err
-                }
+                _ = e.EncodeToken(xml.EndElement{Name: xml.Name{Local: k}})
             } else {
                 if err = e.EncodeElement(v, xml.StartElement{Name: xml.Name{Local: k}}); err != nil {
                     return err
