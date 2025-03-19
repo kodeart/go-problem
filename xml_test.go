@@ -22,12 +22,11 @@ func TestXmlMarshal(t *testing.T) {
 
 	t.Run("should marshal to xml", func(t *testing.T) {
         p := problem.Problem{
-            Status:   http.StatusForbidden,
-            Title:    "Balance Error",
-            Detail:   "You do not have enough credit.",
-            Instance: "/",
-            Type:     "/errors/balance",
-            // Extensions: problem.Extensions{
+            Status:     http.StatusForbidden,
+            Title:      "Balance Error",
+            Detail:     "You do not have enough credit.",
+            Instance:   "/",
+            Type:       "/errors/balance",
             Extensions: map[string]any{
                 "balance":  42,
                 "accounts": []any{"/account/12345", "/account/67890"},
@@ -334,6 +333,26 @@ func TestXmlRenderer(t *testing.T) {
         assert.Contains(t, w.Body.String(), "<accounts><i>/account/1234</i><i>/account/5678</i></accounts>")
     })
 
+    t.Run("should render one array extension", func(t *testing.T) {
+        w := httptest.NewRecorder()
+        p := problem.Problem{}
+        p.WithExtension("accounts", []string{
+            "/account/1234",
+        })
+        p.XML(w)
+
+        assert.Contains(t, w.Body.String(), "<accounts><i>/account/1234</i></accounts>")
+    })
+
+    t.Run("should render empty array extension", func(t *testing.T) {
+        w := httptest.NewRecorder()
+        p := problem.Problem{}
+        p.WithExtension("accounts", []string{})
+        p.XML(w)
+
+        assert.Contains(t, w.Body.String(), "<accounts></accounts>")
+    })
+
     t.Run("should render map extensions", func(t *testing.T) {
         w := httptest.NewRecorder()
         p := problem.Problem{}
@@ -346,5 +365,27 @@ func TestXmlRenderer(t *testing.T) {
 
         assert.Contains(t, body, "<errors><detail>must be a positive integer</detail><pointer>#/age</pointer></errors>")
         assert.Contains(t, body, "<errors><detail>must be green, red or blue</detail><pointer>#/profile/color</pointer></errors>")
+    })
+
+    t.Run("should render one map extension", func(t *testing.T) {
+        w := httptest.NewRecorder()
+        p := problem.Problem{}
+        p.WithExtension("errors", []any{
+            map[string]any{"detail": "must be a positive integer", "pointer": "#/age"},
+        })
+        p.XML(w)
+        body := w.Body.String()
+
+        assert.Contains(t, body, "<errors><detail>must be a positive integer</detail><pointer>#/age</pointer></errors>")
+    })
+
+    t.Run("should not render empty map extension", func(t *testing.T) {
+        w := httptest.NewRecorder()
+        p := problem.Problem{}
+        p.WithExtension("errors", []any{})
+        p.XML(w)
+        body := w.Body.String()
+
+        assert.NotContains(t, body, "<errors>")
     })
 }
