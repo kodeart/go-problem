@@ -7,18 +7,18 @@ import (
     "strconv"
 )
 
-var cacheableStatuses = []int{
-    0,
-    http.StatusOK,
-    http.StatusNoContent,
-    http.StatusPartialContent,
-    http.StatusMultipleChoices,
-    http.StatusMovedPermanently,
-    http.StatusNotFound,
-    http.StatusMethodNotAllowed,
-    http.StatusGone,
-    http.StatusRequestURITooLong,
-    http.StatusNotImplemented,
+var cacheableStatuses = map[int]bool{
+    0:                            true,
+    http.StatusOK:                true,
+    http.StatusNoContent:         true,
+    http.StatusPartialContent:    true,
+    http.StatusMultipleChoices:   true,
+    http.StatusMovedPermanently:  true,
+    http.StatusNotFound:          true,
+    http.StatusMethodNotAllowed:  true,
+    http.StatusGone:              true,
+    http.StatusRequestURITooLong: true,
+    http.StatusNotImplemented:    true,
 }
 
 // statusCode converts various numerical types into int.
@@ -42,13 +42,10 @@ func (p Problem) statusCode(value any) (int, error) {
 }
 
 // setCacheControl sets the `Cache-Control` header
-// if the status code is not in the cacheableStatuses list.
+// if the status code is not in the cacheableStatuses map.
 func setCacheControl(w http.ResponseWriter, status int) http.ResponseWriter {
-    for _, s := range cacheableStatuses {
-        if status == s {
-            return w
-        }
-    }
-    w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-    return w
+	if _, ok := cacheableStatuses[status]; !ok {
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	}
+	return w
 }
