@@ -264,7 +264,6 @@ func TestXmlRenderer(t *testing.T) {
         assert.Equal(t, "application/problem+xml", resp.Header.Get("Content-Type"))
         assert.Equal(t, "no-cache, no-store, must-revalidate", resp.Header.Get("Cache-Control"))
 
-        // the XML output is non-deterministic, so we cannot assert on it
         body := w.Body.String()
         assert.Contains(t, body, `<problem xmlns="urn:ietf:rfc:7807">`)
         assert.Contains(t, body, "<status>503</status>")
