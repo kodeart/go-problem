@@ -21,7 +21,13 @@ in HTTP APIs. It implements the [RFC-9457][RFC9457] standard that creates error 
 ## Installation
 
 ```bash
+go get github.com/kodeart/go-problem/v2
+```
+
+Update
+```
 go get -u github.com/kodeart/go-problem/v2
+go mod tidy
 ```
 
 ### What is it again?
@@ -72,8 +78,6 @@ or even this, **which defeats the whole purpose of the RFC**, but it may be usef
 </problem>
 ```
 
-Don't do this, please.
-
 
 ## Usage
 
@@ -87,7 +91,7 @@ package middleware
 import (
     "net/http"
 
-    "github.com/kodeart/go-problem"
+    "github.com/kodeart/go-problem/v2"
 )
 
 func NotFoundHandler() http.HandlerFunc {
@@ -121,7 +125,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/kodeart/go-problem"
+	"github.com/kodeart/go-problem/v2"
 )
 
 func main() {
